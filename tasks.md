@@ -11,8 +11,9 @@ Progress on the initial version. Each task is pushed to the `claude/initial-vers
 - [x] Agent registry, installed-agent detection and shared-folder grouping
 - [x] Installer: symlink or copy skills into a skills folder, uninstall
 - [x] Versioned skill store for pinned project installs
-- [ ] Project lock file (`.ai/skills.lock.json`): read, write, install, update
-- [ ] Library persistence and the `SkillManager` facade (sources, tags, disable, global enablement, projects)
+- [x] Project lock file (`.ai/skills.lock.json`) format: read and write
+- [ ] Library persistence and the `SkillManager` facade (sources, tags, disable, global enablement)
+- [ ] Project skills: add, remove, sync from the lock file, check for and apply updates
 - [ ] Unit tests for SquireCore
 - [ ] SwiftUI app shell with sidebar navigation
 - [ ] Skills view: list, search, tags, enable or disable, source management
