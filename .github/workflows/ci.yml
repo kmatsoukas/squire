@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [master, "claude/**"]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  macos:
+    name: Build and test (macOS)
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Swift version
+        run: swift --version
+      - name: Build
+        run: swift build
+      - name: Test
+        run: swift test
+      - name: Bundle app
+        run: |
+          scripts/bundle.sh
+          ditto -c -k --keepParent dist/Squire.app dist/Squire.zip
+      - name: Upload Squire.app
+        uses: actions/upload-artifact@v4
+        with:
+          name: Squire
+          path: dist/Squire.zip
+
+  linux-core:
+    name: Test SquireCore (Linux)
+    runs-on: ubuntu-latest
+    container: swift:6.1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test
+        run: swift test
