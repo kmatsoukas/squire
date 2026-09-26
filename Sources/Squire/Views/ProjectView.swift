@@ -109,7 +109,7 @@ struct ProjectView: View {
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 8)
-                .background(.blue.opacity(0.08))
+                .background(Color.blue.opacity(0.08))
             }
 
             Table(details.statuses, selection: $selection) {
