@@ -4,7 +4,7 @@ Progress on the initial version. Each task is pushed to the `claude/initial-vers
 
 - [x] Initial README and package structure on `master`
 - [x] Create the working branch and this task list
-- [ ] CI: build and test on macOS, test SquireCore on Linux
+- [x] CI: build and test on macOS, test SquireCore on Linux
 - [ ] Core models: skills, sources, agents, projects, tags
 - [ ] SKILL.md frontmatter parser and skill scanner
 - [ ] Git client: clone, pull, current commit, snapshot export
