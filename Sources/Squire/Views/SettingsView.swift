@@ -1,4 +1,5 @@
 import SwiftUI
+import UniformTypeIdentifiers
 import SquireCore
 
 /// App preferences: where project lock files live and defaults for new projects.
@@ -6,6 +7,7 @@ struct SettingsView: View {
     @Environment(AppModel.self) private var model
     @State private var draft = SquireSettings()
     @State private var loaded = false
+    @State private var choosingRepositoriesFolder = false
 
     var body: some View {
         Form {
@@ -30,6 +32,29 @@ struct SettingsView: View {
                             if isOn { draft.defaultProjectAgents.append(agent.id) }
                         }
                     ))
+                }
+            }
+
+            Section("Git repositories") {
+                LabeledContent("Clone into") {
+                    HStack {
+                        Text(repositoriesPathLabel)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                        Button("Choose…") { choosingRepositoriesFolder = true }
+                        if draft.repositoriesPath != nil {
+                            Button("Default") { draft.repositoriesPath = nil }
+                        }
+                    }
+                }
+                Text("Git sources are cloned here and their skills are read from the clones. Changing the folder moves existing clones, and repositories already cloned in the new folder are added as sources.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .fileImporter(isPresented: $choosingRepositoriesFolder, allowedContentTypes: [.folder]) { result in
+                if case .success(let url) = result {
+                    draft.repositoriesPath = url.path
                 }
             }
 
@@ -62,6 +87,13 @@ struct SettingsView: View {
                 loaded = true
             }
         }
+    }
+
+    private var repositoriesPathLabel: String {
+        if let path = draft.repositoriesPath, !path.isEmpty {
+            return path.replacingOccurrences(of: NSHomeDirectory(), with: "~")
+        }
+        return "Default (Application Support)"
     }
 
     private func cleaned(_ settings: SquireSettings) -> SquireSettings {

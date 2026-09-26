@@ -118,17 +118,22 @@ public struct SquireSettings: Codable, Hashable, Sendable {
     public var defaultInstallMode: InstallMode
     /// Agents selected for newly added projects.
     public var defaultProjectAgents: [String]
+    /// Folder git sources are cloned into. `nil` uses `~/Library/Application Support/Squire/repos`.
+    /// `~` expands to the home folder.
+    public var repositoriesPath: String?
 
     public init(
         projectFolderName: String = ".ai",
         lockFileName: String = "skills.lock.json",
         defaultInstallMode: InstallMode = .symlink,
-        defaultProjectAgents: [String] = ["claude-code"]
+        defaultProjectAgents: [String] = ["claude-code"],
+        repositoriesPath: String? = nil
     ) {
         self.projectFolderName = projectFolderName
         self.lockFileName = lockFileName
         self.defaultInstallMode = defaultInstallMode
         self.defaultProjectAgents = defaultProjectAgents
+        self.repositoriesPath = repositoriesPath
     }
 
     public init(from decoder: Decoder) throws {
@@ -138,6 +143,7 @@ public struct SquireSettings: Codable, Hashable, Sendable {
         lockFileName = try container.decodeIfPresent(String.self, forKey: .lockFileName) ?? defaults.lockFileName
         defaultInstallMode = try container.decodeIfPresent(InstallMode.self, forKey: .defaultInstallMode) ?? defaults.defaultInstallMode
         defaultProjectAgents = try container.decodeIfPresent([String].self, forKey: .defaultProjectAgents) ?? defaults.defaultProjectAgents
+        repositoriesPath = try container.decodeIfPresent(String.self, forKey: .repositoriesPath)
     }
 }
 

@@ -151,6 +151,64 @@ final class SkillManagerTests: XCTestCase {
         XCTAssertTrue(FileManager.default.fileExists(atPath: projectFolder.appendingPathComponent(".claude/skills/notes/SKILL.md").path))
     }
 
+    func testChangingRepositoriesFolderMovesClonesAndRelinks() throws {
+        let repo = try makeGitRepository()
+        let manager = try makeManager()
+        let source = try manager.addGitSource(url: repo.path)
+        let oldClone = manager.directory(for: source)
+        let pdf = try XCTUnwrap(manager.skills.first { $0.name == "pdf" })
+        let target = try XCTUnwrap(manager.globalTargets().first)
+        try manager.setEnabled(true, skill: pdf, in: target)
+
+        var settings = manager.state.settings
+        settings.repositoriesPath = temp.url.appendingPathComponent("my-repos").path
+        try manager.updateSettings(settings)
+
+        let newClone = manager.directory(for: source)
+        XCTAssertEqual(newClone.path, temp.url.appendingPathComponent("my-repos/remote-skills").path)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: oldClone.path))
+        XCTAssertFalse(manager.isCheckoutMissing(source))
+        XCTAssertEqual(manager.skills(in: source).map(\.name), ["notes", "pdf"])
+
+        let moved = try XCTUnwrap(manager.skills.first { $0.name == "pdf" })
+        XCTAssertTrue(manager.isEnabled(moved, in: target))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: target.directory.appendingPathComponent("pdf/SKILL.md").path))
+
+        // The setting survives a restart.
+        XCTAssertEqual(try makeManager().directory(for: source).path, newClone.path)
+    }
+
+    func testMissingCloneIsReportedAndRestoredByUpdate() throws {
+        let repo = try makeGitRepository()
+        let manager = try makeManager()
+        let source = try manager.addGitSource(url: repo.path)
+        try FileManager.default.removeItem(at: manager.directory(for: source))
+        manager.rescan()
+
+        XCTAssertTrue(manager.isCheckoutMissing(source))
+        XCTAssertTrue(manager.skills.isEmpty)
+        try manager.updateSource(id: source.id)
+        XCTAssertFalse(manager.isCheckoutMissing(source))
+        XCTAssertEqual(manager.skills.count, 2)
+    }
+
+    func testImportsClonesFoundInRepositoriesFolder() throws {
+        let repo = try makeGitRepository()
+        let reposFolder = try temp.folder("clones")
+        try runGit(["clone", "--quiet", repo.path, reposFolder.appendingPathComponent("team-skills").path], in: temp.url)
+        _ = try temp.folder("clones/not-a-repo")
+
+        let manager = try makeManager()
+        var settings = manager.state.settings
+        settings.repositoriesPath = reposFolder.path
+        try manager.updateSettings(settings)
+
+        XCTAssertEqual(manager.state.sources.map(\.id), ["team-skills"])
+        XCTAssertEqual(manager.state.sources.first?.location, repo.path)
+        XCTAssertEqual(manager.skills.map(\.name), ["notes", "pdf"])
+        XCTAssertTrue(try manager.importExistingClones().isEmpty, "already imported")
+    }
+
     func testRepositoryName() {
         XCTAssertEqual(SkillManager.repositoryName(from: "https://github.com/anthropics/skills.git"), "skills")
         XCTAssertEqual(SkillManager.repositoryName(from: "git@github.com:org/agent-skills.git"), "agent-skills")

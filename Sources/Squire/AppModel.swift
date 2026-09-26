@@ -35,6 +35,10 @@ final class AppModel {
         do {
             manager = try SkillManager()
             refresh()
+            // Pick up repositories cloned into the repositories folder outside Squire.
+            run("Looking for repositories…") { manager in
+                try manager.importExistingClones()
+            }
         } catch {
             errorMessage = "Squire could not load its library: \(error.localizedDescription)"
         }
@@ -270,8 +274,19 @@ final class AppModel {
 
     // MARK: - Settings
 
+    func isCheckoutMissing(_ source: SkillSource) -> Bool {
+        manager?.isCheckoutMissing(source) ?? false
+    }
+
+    func importExistingClones() {
+        run("Looking for repositories…") { manager in
+            try manager.importExistingClones()
+        }
+    }
+
     func updateSettings(_ settings: SquireSettings) {
-        run("Saving settings…") { manager in
+        let movesRepositories = settings.repositoriesPath != self.settings.repositoriesPath
+        run(movesRepositories ? "Moving repositories…" : "Saving settings…") { manager in
             try manager.updateSettings(settings)
         }
     }

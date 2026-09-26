@@ -27,9 +27,9 @@ The initial version was built on `claude/initial-version-7t07za` and merged into
 
 ## Next
 
-- [ ] Configurable repositories folder: a setting for where git sources are cloned (default `~/Library/Application Support/Squire/repos`), with a folder picker in Settings
-- [ ] Move existing clones when the repositories folder changes, and keep working if a clone is missing
-- [ ] Pick up repositories already cloned in the repositories folder as sources
+- [x] Configurable repositories folder: a setting for where git sources are cloned (default `~/Library/Application Support/Squire/repos`), with a folder picker in Settings
+- [x] Move existing clones when the repositories folder changes, and keep working if a clone is missing
+- [x] Pick up repositories already cloned in the repositories folder as sources
 - [ ] Editor for custom agents in Settings (supported in `LibraryState.customAgents`, no UI yet)
 - [ ] Prune store snapshots no project uses any more
 - [ ] Rename sources and pick a branch after adding
