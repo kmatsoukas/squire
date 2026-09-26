@@ -15,7 +15,7 @@ Progress on the initial version. Each task is pushed to the `claude/initial-vers
 - [x] Library persistence and the `SkillManager` facade (sources, tags, disable, global enablement)
 - [x] Project skills: add, remove, sync from the lock file, check for and apply updates
 - [ ] Unit tests for SquireCore
-- [ ] SwiftUI app shell with sidebar navigation
+- [x] SwiftUI app shell with sidebar navigation
 - [ ] Skills view: list, search, tags, enable or disable, source management
 - [ ] Agents view: installed agents grouped by folder, enable skills globally
 - [ ] Projects view: add projects, manage project skills, sync and update the lock file
