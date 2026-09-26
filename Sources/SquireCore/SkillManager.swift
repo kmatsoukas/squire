@@ -37,7 +37,7 @@ public final class SkillManager: @unchecked Sendable {
     public let paths: SquirePaths
     public let pathResolver: PathResolver
     public let git: GitClient
-    public private(set) var state: LibraryState
+    public internal(set) var state: LibraryState
     /// Every skill found in every source, refreshed by `rescan()`.
     public private(set) var skills: [Skill] = []
 
