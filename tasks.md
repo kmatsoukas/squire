@@ -20,5 +20,5 @@ Progress on the initial version. Each task is pushed to the `claude/initial-vers
 - [x] Agents view: installed agents grouped by folder, enable skills globally
 - [x] Projects view: add projects, manage project skills, sync and update the lock file
 - [x] Settings: lock folder name and default install mode
-- [ ] Script to bundle `Squire.app`
+- [x] Script to bundle `Squire.app`
 - [ ] Update README with usage

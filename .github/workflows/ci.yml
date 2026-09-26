@@ -21,6 +21,15 @@ jobs:
         run: swift build
       - name: Test
         run: swift test
+      - name: Bundle app
+        run: |
+          scripts/bundle.sh
+          ditto -c -k --keepParent dist/Squire.app dist/Squire.zip
+      - name: Upload Squire.app
+        uses: actions/upload-artifact@v4
+        with:
+          name: Squire
+          path: dist/Squire.zip
 
   linux-core:
     name: Test SquireCore (Linux)
