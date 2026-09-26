@@ -1,6 +1,8 @@
 # Squire tasks
 
-Progress on the initial version. Each task is pushed to the `claude/initial-version-7t07za` branch when done.
+The initial version was built on `claude/initial-version-7t07za` and merged into `master`. Follow-up work happens on `claude/remaining-tasks`, pushing after each task.
+
+## Initial version
 
 - [x] Initial README and package structure on `master`
 - [x] Create the working branch and this task list
@@ -23,8 +25,11 @@ Progress on the initial version. Each task is pushed to the `claude/initial-vers
 - [x] Script to bundle `Squire.app`
 - [x] Update README with usage
 
-## Later
+## Next
 
+- [x] Configurable repositories folder: a setting for where git sources are cloned (default `~/Library/Application Support/Squire/repos`), with a folder picker in Settings
+- [x] Move existing clones when the repositories folder changes, and keep working if a clone is missing
+- [x] Pick up repositories already cloned in the repositories folder as sources
 - [ ] Editor for custom agents in Settings (supported in `LibraryState.customAgents`, no UI yet)
 - [ ] Prune store snapshots no project uses any more
 - [ ] Rename sources and pick a branch after adding

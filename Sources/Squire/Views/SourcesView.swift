@@ -41,6 +41,8 @@ struct SourcesView: View {
                 Menu {
                     Button("Git Repository…") { addingGitSource = true }
                     Button("Local Folder…") { choosingFolder = true }
+                    Divider()
+                    Button("Find Repositories in Clone Folder") { model.importExistingClones() }
                 } label: {
                     Label("Add Source", systemImage: "plus")
                 }
@@ -93,6 +95,10 @@ struct SourceRow: View {
                         .font(.headline)
                     if let branch = source.branch {
                         StatusBadge(text: branch, color: .purple)
+                    }
+                    if model.isCheckoutMissing(source) {
+                        StatusBadge(text: "Not downloaded", color: .orange)
+                            .help("The clone is missing. Update the source to clone it again.")
                     }
                 }
                 Text(source.location)

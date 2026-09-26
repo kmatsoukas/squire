@@ -94,7 +94,7 @@ To make a double-clickable app, run `scripts/bundle.sh`, which writes an ad-hoc 
 ## Where Squire keeps its data
 
 - `~/Library/Application Support/Squire/library.json`: sources, tags, disabled skills, projects and settings. Global enablement is read from the agents' skills folders themselves.
-- `~/Library/Application Support/Squire/repos/`: clones of git sources.
+- `~/Library/Application Support/Squire/repos/`: clones of git sources, by default. Settings can point this at any folder; existing clones move with it, and repositories already cloned there are added as sources.
 - `~/Library/Application Support/Squire/store/`: versioned snapshots of skills used by projects.
 
 ## Status

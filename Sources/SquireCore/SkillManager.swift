@@ -88,12 +88,99 @@ public final class SkillManager: @unchecked Sendable {
 
     // MARK: - Settings
 
+    /// Saves new settings. When the repositories folder changes, existing clones move to the
+    /// new folder (a clone already there is kept instead) and global links are pointed at them.
     public func updateSettings(_ settings: SquireSettings) throws {
+        let oldRepositories = repositoriesDirectory
+        let newRepositories = Self.repositoriesDirectory(for: settings, paths: paths, resolver: pathResolver)
+        guard oldRepositories.standardizedFileURL.path != newRepositories.standardizedFileURL.path else {
+            state.settings = settings
+            try save()
+            return
+        }
+
+        // Remember which global links point into the old clones, so they can be recreated.
+        let targets = registry.globalTargets(onlyInstalled: false)
+        var links: [(skillID: String, target: SkillTarget)] = []
+        for skill in skills where source(withID: skill.sourceID)?.kind == .git {
+            for target in targets where isEnabled(skill, in: target) {
+                links.append((skill.id, target))
+            }
+        }
+
+        try fileManager.createDirectory(at: newRepositories, withIntermediateDirectories: true)
+        for source in state.sources where source.kind == .git {
+            let old = oldRepositories.appendingPathComponent(source.id, isDirectory: true)
+            let new = newRepositories.appendingPathComponent(source.id, isDirectory: true)
+            if fileManager.fileExists(atPath: old.path) && !fileManager.fileExists(atPath: new.path) {
+                try fileManager.moveItem(at: old, to: new)
+            }
+        }
+
         state.settings = settings
         try save()
+        rescan()
+
+        for link in links {
+            guard let skill = self.skill(withID: link.skillID) else { continue }
+            try installer.install(skill.directory, as: skill.installName, into: link.target.directory, mode: .symlink)
+        }
+        try importExistingClones()
     }
 
     // MARK: - Sources
+
+    /// Folder git sources are cloned into, from the settings.
+    public var repositoriesDirectory: URL {
+        Self.repositoriesDirectory(for: state.settings, paths: paths, resolver: pathResolver)
+    }
+
+    static func repositoriesDirectory(for settings: SquireSettings, paths: SquirePaths, resolver: PathResolver) -> URL {
+        guard let path = settings.repositoriesPath?.trimmingCharacters(in: .whitespaces), !path.isEmpty else {
+            return paths.reposDirectory
+        }
+        return resolver.expand(path)
+    }
+
+    /// Whether a git source's clone is missing, for example after the folder was deleted.
+    /// Updating the source clones it again.
+    public func isCheckoutMissing(_ source: SkillSource) -> Bool {
+        source.kind == .git && !fileManager.fileExists(atPath: directory(for: source).appendingPathComponent(".git").path)
+    }
+
+    /// Adds git repositories found in the repositories folder that are not sources yet,
+    /// for example ones cloned by hand. Returns the new sources.
+    @discardableResult
+    public func importExistingClones() throws -> [SkillSource] {
+        let root = repositoriesDirectory
+        guard let children = try? fileManager.contentsOfDirectory(atPath: root.path) else { return [] }
+        var imported: [SkillSource] = []
+        for child in children.sorted() where !child.hasPrefix(".") {
+            let folder = root.appendingPathComponent(child, isDirectory: true)
+            guard fileManager.fileExists(atPath: folder.appendingPathComponent(".git").path),
+                  !state.sources.contains(where: { $0.id == child }) else {
+                continue
+            }
+            // Without an origin remote the folder is still usable, it just cannot be restored elsewhere.
+            let location = (try? git.remoteURL(folder)) ?? folder.path
+            if findSource(location: location) != nil { continue }
+            let source = SkillSource(
+                id: child,
+                kind: .git,
+                name: child,
+                location: location,
+                revision: try? git.headCommit(folder),
+                lastUpdated: Date()
+            )
+            state.sources.append(source)
+            imported.append(source)
+        }
+        if !imported.isEmpty {
+            try save()
+            rescan()
+        }
+        return imported
+    }
 
     public func source(withID id: String) -> SkillSource? {
         state.sources.first { $0.id == id }
@@ -103,7 +190,7 @@ public final class SkillManager: @unchecked Sendable {
     public func directory(for source: SkillSource) -> URL {
         switch source.kind {
         case .git:
-            return paths.reposDirectory.appendingPathComponent(source.id, isDirectory: true)
+            return repositoriesDirectory.appendingPathComponent(source.id, isDirectory: true)
         case .local:
             return URL(fileURLWithPath: source.location, isDirectory: true)
         }
