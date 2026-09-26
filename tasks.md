@@ -22,3 +22,10 @@ Progress on the initial version. Each task is pushed to the `claude/initial-vers
 - [x] Settings: lock folder name and default install mode
 - [x] Script to bundle `Squire.app`
 - [x] Update README with usage
+
+## Later
+
+- [ ] Editor for custom agents in Settings (supported in `LibraryState.customAgents`, no UI yet)
+- [ ] Prune store snapshots no project uses any more
+- [ ] Rename sources and pick a branch after adding
+- [ ] App icon
