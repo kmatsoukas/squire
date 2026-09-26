@@ -29,4 +29,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Test
-        run: swift test --filter SquireCoreTests
+        run: swift test
