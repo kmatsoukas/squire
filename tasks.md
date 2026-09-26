@@ -21,4 +21,4 @@ Progress on the initial version. Each task is pushed to the `claude/initial-vers
 - [x] Projects view: add projects, manage project skills, sync and update the lock file
 - [x] Settings: lock folder name and default install mode
 - [x] Script to bundle `Squire.app`
-- [ ] Update README with usage
+- [x] Update README with usage

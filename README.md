@@ -99,4 +99,4 @@ To make a double-clickable app, run `scripts/bundle.sh`, which writes an ad-hoc 
 
 ## Status
 
-Early development. See [tasks.md](tasks.md) for progress.
+Initial version. See [tasks.md](tasks.md) for what is done.
