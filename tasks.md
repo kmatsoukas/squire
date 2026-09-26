@@ -8,7 +8,7 @@ Progress on the initial version. Each task is pushed to the `claude/initial-vers
 - [x] Core models: skills, sources, agents, projects, tags
 - [x] SKILL.md frontmatter parser and skill scanner
 - [x] Git client: clone, pull, current commit, snapshot export
-- [ ] Agent registry, installed-agent detection and shared-folder grouping
+- [x] Agent registry, installed-agent detection and shared-folder grouping
 - [ ] Installer: symlink or copy skills into a skills folder, uninstall
 - [ ] Versioned skill store for pinned project installs
 - [ ] Project lock file (`.ai/skills.lock.json`): read, write, install, update
