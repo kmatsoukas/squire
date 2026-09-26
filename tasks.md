@@ -12,7 +12,7 @@ Progress on the initial version. Each task is pushed to the `claude/initial-vers
 - [x] Installer: symlink or copy skills into a skills folder, uninstall
 - [x] Versioned skill store for pinned project installs
 - [x] Project lock file (`.ai/skills.lock.json`) format: read and write
-- [ ] Library persistence and the `SkillManager` facade (sources, tags, disable, global enablement)
+- [x] Library persistence and the `SkillManager` facade (sources, tags, disable, global enablement)
 - [ ] Project skills: add, remove, sync from the lock file, check for and apply updates
 - [ ] Unit tests for SquireCore
 - [ ] SwiftUI app shell with sidebar navigation
