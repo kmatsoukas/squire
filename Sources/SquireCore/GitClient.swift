@@ -44,7 +44,10 @@ public struct GitClient: Sendable {
         guard !path.isEmpty else { return try headCommit(repository) }
         let output = try git(["-C", repository.path, "log", "-1", "--format=%H", "--", path])
             .trimmingCharacters(in: .whitespacesAndNewlines)
-        return output.isEmpty ? try headCommit(repository) : output
+        if output.isEmpty {
+            return try headCommit(repository)
+        }
+        return output
     }
 
     /// Whether `commit` exists in the local clone.
